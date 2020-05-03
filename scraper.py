@@ -12,6 +12,8 @@ def fetch_url(url, headers):
         if response.status_code == 200:
             html = response.text
             return html
+        else:
+            print(response.status_code)
     except Exception as ex:
         print(str(ex))
 
@@ -56,12 +58,14 @@ def publish_message(producer_instance, data):
 
 
 if __name__ == '__main__':
-    url = "https://www.allrecipes.com/recipes/88/bbq-grilling/"
-    headers = {'User-Agent': '''Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6)
-               AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari
-               537.36''',
-               'Pragma': 'no-cache'
+
+    url_template = "https://www.allrecipes.com/recipes/88/bbq-grilling/?page="
+    headers = {'User-Agent': '''Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari 537.36''',
+                             'Pragma': 'no-cache'
                }
-    html = fetch_url(url, headers)
-    producer_instance = connect_kafka_producer()
-    parse_url(html, headers, producer_instance)
+    for i in range(20, 40):
+        url = url_template + str(i)
+        print(url)
+        html = fetch_url(url, headers)
+        producer_instance = connect_kafka_producer()
+        parse_url(html, headers, producer_instance)
