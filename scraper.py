@@ -63,7 +63,7 @@ if __name__ == '__main__':
     headers = {'User-Agent': '''Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari 537.36''',
                              'Pragma': 'no-cache'
                }
-    for i in range(20, 40):
+    for i in range(30, 40):
         url = url_template + str(i)
         print(url)
         html = fetch_url(url, headers)

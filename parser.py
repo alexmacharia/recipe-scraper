@@ -51,6 +51,9 @@ def parse_page(data):
 
     recipe = dict()
 
+    print(title)
+    print(soup)
+
     steps_div = soup.find('div', attrs={'class': 'directions--section__steps'})
     steps_list = steps_div.findAll('li', attrs={'class': 'step'})
 
@@ -63,11 +66,11 @@ def parse_page(data):
     ingr_list = None
     ingr_ul = soup.findAll('ul', attrs={'class': 'checklist'})
     for item in ingr_ul:
-        ingr = i.findAll('li', attrs={'class': 'checkList__line'})
+        ingr = item.findAll('li', attrs={'class': 'checkList__line'})
         if not ingr_list:
-            ingr_list = part
+            ingr_list = ingr
         else:
-            ingr_list.extend(part)
+            ingr_list.extend(ingr)
     ingredients = [item.find('span').text for item in ingr_list]
     recipe['ingredients'] = ingredients
 
@@ -86,20 +89,21 @@ def parse_page(data):
     vid_url = []
 
     for item in urls_list:
-        vid_link = a['href']
+        vid_link = item['href']
         img_link = item.find('img')['src']
         vid_url.append(vid_link)
         img_url.append(img_link)
-     recipe['video_url'] = vid_url
-     recipe['image_url'] = img_url
+    recipe['video_url'] = vid_url
+    recipe['image_url'] = img_url
 
-     return recipe
+    return recipe
+
 
 if __name__ == '__main__':
     consumer = connect_kafka_consumer()
 
     for message in consumer:
         message = message.value  # Decode message
-        print(message)
-        # Call parse_page() and return structured json object
+        parsed = parse_page(message)  # Call parse_page() return json obj
+        print(parsed)
         # Publish message to parsed_recipe topic
